@@ -27,21 +27,20 @@
   let set = null, frames = [], loaded = 0, started = false, raf = 0, shown = -1, visible = false;
 
   const pick = () => (innerHeight > innerWidth
-    ? { base: D.v, n: +D.nv, w: 540, h: 960 }
-    : { base: D.h, n: +D.nh, w: 1280, h: 720 });
+    ? { base: D.v, n: +D.nv, w: 0, h: 0 }
+    : { base: D.h, n: +D.nh, w: 0, h: 0 });
   const name = (i) => String(i + 1).padStart(3, '0') + '.webp';
 
   function load() {
     const s = pick();
     if (set && set.base === s.base) return;
     set = s; frames = new Array(s.n); loaded = 0; shown = -1;
-    canvas.width = s.w; canvas.height = s.h;
     // primero el primero y el último, luego en orden
     const order = [0, s.n - 1, ...Array.from({ length: s.n - 2 }, (_, i) => i + 1)];
     order.forEach((i) => {
       const im = new Image();
       im.decoding = 'async';
-      im.onload = () => { frames[i] = im; loaded++; shown = -1; schedule(); };
+      im.onload = () => { if (!set.w) { set.w = im.naturalWidth; set.h = im.naturalHeight; canvas.width = set.w; canvas.height = set.h; } frames[i] = im; loaded++; shown = -1; schedule(); };
       im.src = s.base + name(i);
     });
   }
@@ -49,7 +48,7 @@
   const nearest = (i) => { for (let k = 0; k < frames.length; k++) { const a = frames[i - k] ? i - k : frames[i + k] ? i + k : -1; if (a >= 0) return a; } return -1; };
 
   function draw(p) {
-    if (!set) return;
+    if (!set || !set.w) return;
     const f = p * (set.n - 1), i = Math.floor(f), t = f - i;
     const key = Math.round(f * 20);
     if (key === shown) return; shown = key;

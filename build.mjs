@@ -202,6 +202,26 @@ const chapters = [
   { cls: 'cemento-claro', s: svc.plomeria },
 ];
 
+
+/* ---------- Sección de scroll (muro / instalación) ---------- */
+const obraBlock = ({ titulo, label, pasos, alt, dirH, nH, dirV, nV, finalH, finalV, msg, cls = '' }) => `
+<section class="obra on-dark ${cls}" aria-labelledby="obra-h" data-obra data-h="${dirH}" data-nh="${nH}" data-v="${dirV}" data-nv="${nV}">
+  <div class="obra__track">
+    <div class="obra__sticky">
+      <img class="obra__fallback" src="${finalH}" srcset="${finalV} 720w, ${finalH} 1280w" sizes="100vw" width="1280" height="720" alt="${alt}" loading="lazy" decoding="async">
+      <canvas class="obra__canvas" aria-hidden="true"></canvas>
+      <div class="obra__shade" aria-hidden="true"></div>
+      <div class="obra__txt">
+        <p class="label">${label}</p>
+        <h2 class="display" id="obra-h">${titulo}</h2>
+        <ol class="obra__steps">${pasos.map((t, i) => `<li class="obra__step${i === 0 ? ' is-on' : ''}"><b>0${i + 1}</b> ${t}</li>`).join('')}</ol>
+        <div class="obra__cta">${wa(msg, 'Cotizar mi obra')}</div>
+      </div>
+      <i class="obra__bar" aria-hidden="true"></i>
+    </div>
+  </div>
+</section>`;
+
 write('/', layout({
   path: '/', current: '/', scripts: ['/js/obra.js'],
   title: 'Albañil, constructor y plomero en Guadalajara | Eduardo Sandoval',
@@ -224,26 +244,13 @@ write('/', layout({
   <div class="nivel"><span class="nivel__tubo" aria-hidden="true"><i class="nivel__burbuja"></i></span><a class="link-arrow nivel__link" href="/nivel/">Prueba el nivel en tu celular <span aria-hidden="true">→</span></a></div>
 </div></section>
 
-<section class="obra on-dark" aria-labelledby="obra-h" data-obra data-h="/media/scroll-h/" data-nh="59" data-v="/media/scroll-v/" data-nv="48">
-  <div class="obra__track">
-    <div class="obra__sticky">
-      <img class="obra__fallback" src="/media/obra-final-h.webp" srcset="/media/obra-final-v.webp 540w, /media/obra-final-h.webp 1280w" sizes="100vw" width="1280" height="720" alt="Muro de tabique levantado y aplanado a plomo" loading="lazy" decoding="async">
-      <canvas class="obra__canvas" aria-hidden="true"></canvas>
-      <div class="obra__shade" aria-hidden="true"></div>
-      <div class="obra__txt">
-        <p class="label">Así se levanta tu obra</p>
-        <h2 class="display" id="obra-h">De cero a muro terminado</h2>
-        <ol class="obra__steps">
-          <li class="obra__step is-on"><b>01</b> Se asienta la primera hilada, derecha y a nivel.</li>
-          <li class="obra__step"><b>02</b> El muro sube hilada por hilada, a plomo y bien trabado.</li>
-          <li class="obra__step"><b>03</b> Se aplana y queda listo para pintar o poner acabados.</li>
-        </ol>
-        <div class="obra__cta">${wa('Hola Eduardo, quiero cotizar un muro o una obra.', 'Cotizar mi obra')}</div>
-      </div>
-      <i class="obra__bar" aria-hidden="true"></i>
-    </div>
-  </div>
-</section>
+${obraBlock({
+  titulo: 'De cero a muro terminado', label: 'Así se levanta tu obra',
+  pasos: ['Se asienta la primera hilada, derecha y a nivel.', 'El muro sube hilada por hilada, a plomo y bien trabado.', 'Se aplana y queda listo para pintar o poner acabados.'],
+  alt: 'Muro de tabique levantado y aplanado a plomo',
+  dirH: '/media/scroll-h/', nH: 59, dirV: '/media/scroll-v/', nV: 48, finalH: '/media/obra-final-h.webp', finalV: '/media/obra-final-v.webp',
+  msg: 'Hola Eduardo, quiero cotizar un muro o una obra.',
+})}
 
 <div class="stack">
 ${chapters.map(({ cls, s }) => `
@@ -288,19 +295,28 @@ ${cta()}`,
 for (const s of services) {
   const crumbs = [['Inicio', '/'], [s.nombre, `/${s.slug}/`]];
   write(`/${s.slug}/`, layout({
-    path: `/${s.slug}/`, current: `/${s.slug}/`, title: s.title, desc: s.desc,
+    path: `/${s.slug}/`, current: `/${s.slug}/`, title: s.title, desc: s.desc, scripts: s.slug === 'plomeria' ? ['/js/obra.js'] : [],
     schema: [
       businessSchema(),
       { '@context': 'https://schema.org', '@type': 'Service', name: s.nombre, serviceType: s.nombre, provider: { '@id': `${site.url}/#negocio` }, areaServed: site.areas.map((a) => ({ '@type': 'City', name: a })), description: s.desc, url: `${site.url}/${s.slug}/` },
       faqSchema(s.faq), crumbSchema(crumbs),
     ],
     body: `
-<section class="sub-hero ladrillo"><div class="wrap">
+<section class="sub-hero ladrillo${s.slug === 'plomeria' ? ' sub-hero--video on-dark' : ''}">${s.slug === 'plomeria' ? `
+  <video class="hero__video" poster="/media/plomeria/hero-poster.webp" muted loop playsinline autoplay preload="metadata" aria-hidden="true" tabindex="-1"><source src="/media/plomeria/hero.mp4" type="video/mp4"></video>
+  <div class="hero__shade" aria-hidden="true"></div>` : ''}<div class="wrap">
   <nav class="crumbs" aria-label="Migas de pan"><a href="/">Inicio</a><span>/</span><span>${s.nombre}</span></nav>
   <h1 class="display"><span class="h-line" style="--i:0"><span>${s.h1}</span></span></h1>
   <div class="panel"><p class="lede">${s.intro}</p></div>
   <div class="btn-row">${wa(s.msg, 'Cotizar por WhatsApp')}${tel('Llamar')}</div>
 </div></section>
+${s.slug === 'plomeria' ? obraBlock({
+  titulo: 'Del tubo al agua corriendo', label: 'Así se instala', cls: 'obra--apilado',
+  pasos: ['Se traza el recorrido y se asienta el tubo, a plomo y a nivel.', 'Se arman las uniones e instalan las válvulas, bien selladas.', 'Se conecta el mueble y se prueba con agua antes de entregar.'],
+  alt: 'Instalación de tubo de cobre con válvula y llave, con agua corriendo',
+  dirH: '/media/plomeria/scroll-h/', nH: 60, dirV: '/media/plomeria/scroll-v/', nV: 50, finalH: '/media/plomeria/final-h.webp', finalV: '/media/plomeria/final-v.webp',
+  msg: s.msg,
+}) : ''}
 
 <section class="sec cemento"><div class="wrap">
   <div class="sec-head"><p class="label">Qué hago</p><h2 class="display">Trabajos de ${s.nombre.toLowerCase()}</h2></div>

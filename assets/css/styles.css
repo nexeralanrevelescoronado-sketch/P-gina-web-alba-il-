@@ -381,3 +381,17 @@ button.btn { font-family: var(--f-body); }
   .obra__cta { display: none; }
   .obra.is-live .obra__steps { min-height: 3.7rem; }
 }
+
+/* ---------- Portada con video en subpágina (plomería) ---------- */
+.sub-hero--video { position: relative; overflow: hidden; isolation: isolate; }
+.sub-hero--video .hero__video { object-position: 50% 50%; }
+.sub-hero--video .hero__shade { background: linear-gradient(180deg, rgba(20,20,22,.55), rgba(20,20,22,.7)); }
+.sub-hero--video { background-image: none; background-color: var(--graf); }
+
+/* Sección de scroll apilada en celular: imagen arriba y texto abajo (el video es horizontal) */
+@media (max-width: 899px) {
+  .obra--apilado .obra__sticky { display: flex; flex-direction: column; justify-content: flex-start; gap: 1.1rem; padding-top: 1.2rem; }
+  .obra--apilado .obra__fallback, .obra--apilado .obra__canvas { position: relative; inset: auto; width: 100%; height: auto; aspect-ratio: 5 / 4; flex: none; }
+  .obra--apilado .obra__shade { display: none; }
+  .obra--apilado .obra__txt { position: static; width: 100%; }
+}
