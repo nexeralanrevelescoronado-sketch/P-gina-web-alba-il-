@@ -100,7 +100,7 @@ const svc = Object.fromEntries(services.map((s) => [s.slug, s]));
 /* ---------- Layout ---------- */
 const NAV = [
   ['/', 'Inicio'], ['/albanileria/', 'Albañilería'], ['/construccion/', 'Construcción'],
-  ['/plomeria/', 'Plomería'], ['/blog/', 'Blog'], ['#contacto', 'Contacto'],
+  ['/plomeria/', 'Plomería'], ['/nivel/', 'Nivel'], ['/blog/', 'Blog'], ['#contacto', 'Contacto'],
 ];
 
 const logoMark = `<svg class="logo__mark" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="10" fill="#1c1d1f"/><text x="24" y="25" text-anchor="middle" font-family="Anton,Impact,sans-serif" font-size="21" fill="#f3f3f1">ES</text><rect x="6" y="30" width="16" height="5" fill="#a8442a"/><rect x="24" y="30" width="18" height="5" fill="#a8442a"/><rect x="6" y="37" width="7" height="5" fill="#a8442a"/><rect x="15" y="37" width="16" height="5" fill="#a8442a"/><rect x="33" y="37" width="9" height="5" fill="#a8442a"/></svg>`;
@@ -120,8 +120,8 @@ const businessSchema = () => ({
 const faqSchema = (faq) => ({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) });
 const crumbSchema = (items) => ({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items.map(([name, path], i) => ({ '@type': 'ListItem', position: i + 1, name, item: site.url + path })) });
 
-function layout({ path, title, desc, body, schema = [], current = '', type = 'website', noindex = false }) {
-  const nav = NAV.map(([href, label]) => `<a href="${href}"${href === current ? ' aria-current="page"' : ''}>${label}</a>`).join('');
+function layout({ path, title, desc, body, schema = [], current = '', type = 'website', noindex = false, scripts = [] }) {
+  const nav = NAV.map(([href, label]) => `<a href="${href}"${href === '/' ? ' class="nav__home"' : ''}${href === current ? ' aria-current="page"' : ''}>${label}</a>`).join('');
   return `<!doctype html>
 <html lang="es-MX">
 <head>
@@ -159,12 +159,13 @@ ${body}
 </main>
 <footer class="footer"><div class="wrap">
   <div>${logo()}<p style="margin-top:1rem;max-width:28rem">Albañilería, construcción y plomería en ${site.city} y zona metropolitana.</p></div>
-  <div><h4>Servicios</h4><ul>${services.map((s) => `<li><a href="/${s.slug}/">${s.nombre}</a></li>`).join('')}<li><a href="/blog/">Blog</a></li></ul></div>
+  <div><h4>Servicios</h4><ul>${services.map((s) => `<li><a href="/${s.slug}/">${s.nombre}</a></li>`).join('')}<li><a href="/nivel/">Nivel de burbuja</a></li><li><a href="/blog/">Blog</a></li></ul></div>
   <div><h4>Contacto</h4><ul><li><a href="${telHref()}">${phoneDisplay()}</a></li><li><a href="${waHref(MSG)}" target="_blank" rel="noopener">WhatsApp</a></li><li>${site.areas.join(' · ')}</li></ul></div>
   <p class="copy">© <span id="year">2026</span> Eduardo Sandoval. Todos los derechos reservados.</p>
 </div></footer>
 <div class="dock" role="group" aria-label="Contacto rápido">${wa(MSG)}${tel()}</div>
 <script src="/js/main.js" defer></script>
+${scripts.map((s) => `<script src="${s}" defer></script>`).join('')}
 </body>
 </html>`;
 }
@@ -217,7 +218,7 @@ write('/', layout({
   <p class="lede">Muros, losas, remodelaciones y reparaciones de plomería con trabajo limpio y presupuesto claro. Cuéntame qué necesitas y te respondo.</p>
   <div class="btn-row">${wa(MSG, 'Cotizar por WhatsApp')}${tel('Llamar')}</div>
   <ul class="chips"><li>Trabajo limpio</li><li>Presupuesto claro</li><li>Respuesta por WhatsApp</li></ul>
-  <div class="nivel" aria-hidden="true"><span class="nivel__tubo"><i class="nivel__burbuja"></i></span></div>
+  <div class="nivel"><span class="nivel__tubo" aria-hidden="true"><i class="nivel__burbuja"></i></span><a class="link-arrow nivel__link" href="/nivel/">Prueba el nivel en tu celular <span aria-hidden="true">→</span></a></div>
 </div></section>
 
 <div class="stack">
@@ -341,13 +342,79 @@ ${cta(`Hola Eduardo, leí tu artículo "${p.title}" y quiero una cotización.`)}
   }));
 }
 
+/* ---------- Nivel (sensor del celular) ---------- */
+const nivelFaq = [
+  ['¿Funciona en iPhone y en Android?', 'Sí. En iPhone, Safari te pide permiso para usar los sensores de movimiento: toca «Permitir». En Android funciona directo desde Chrome.'],
+  ['¿Qué tan preciso es?', 'Sirve para el día a día: repisas, cuadros, muebles, pisos y marcos. Cada celular trae su propio sensor, por eso conviene calibrarlo sobre una superficie que ya sepas que está nivelada. Para trabajos de precisión en obra usa un nivel físico.'],
+  ['¿Se puede usar con el cel acostado, de lado o parado?', 'Sí. El instrumento se gira solo para que lo leas derecho, aunque tengas activado el bloqueo de rotación de pantalla.'],
+  ['¿Guarda o manda datos de mi celular?', 'No. Todo se calcula en tu teléfono; la página no guarda ni envía lo que mide el sensor.'],
+  ['No me responde el sensor, ¿qué hago?', 'Abre la página directo en Safari o Chrome (no dentro de otra app) y permite el acceso a movimiento. Si lo negaste sin querer, cierra la pestaña, ábrela de nuevo y toca «Activar nivel».'],
+];
+
+write('/nivel/', layout({
+  path: '/nivel/', current: '/nivel/', scripts: ['/js/nivel.js'],
+  title: 'Nivel de burbuja en tu celular (gratis) | Eduardo Sandoval',
+  desc: 'Nivel de burbuja gratis que usa el sensor de tu celular: horizontal para repisas y pisos, vertical para paredes y postes. Funciona en iPhone y Android.',
+  schema: [
+    { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Nivel de burbuja en el celular', url: `${site.url}/nivel/`, applicationCategory: 'UtilitiesApplication', operatingSystem: 'Any', inLanguage: 'es-MX', offers: { '@type': 'Offer', price: '0', priceCurrency: 'MXN' }, publisher: { '@id': `${site.url}/#negocio` } },
+    faqSchema(nivelFaq), crumbSchema([['Inicio', '/'], ['Nivel', '/nivel/']]),
+  ],
+  body: `
+<section class="sub-hero ladrillo"><div class="wrap">
+  <nav class="crumbs" aria-label="Migas de pan"><a href="/">Inicio</a><span>/</span><span>Nivel</span></nav>
+  <h1 class="display"><span class="h-line" style="--i:0"><span>Nivel en tu celular</span></span></h1>
+  <div class="panel"><p class="lede">Un nivel de burbuja de verdad: usa el sensor de tu teléfono para revisar repisas, pisos, muros y postes. Gratis y sin instalar nada.</p></div>
+</div></section>
+
+<section class="sec cemento nivel-app"><div class="wrap">
+  <div class="inst" id="inst">
+    <div class="inst__panel cemento-oscuro" id="panel">
+      <p class="label" id="modeLbl">Horizontal</p>
+      <div class="gauge" id="gH"><div class="vial" id="vial"><i class="vial__b" id="vialB"></i></div></div>
+      <div class="gauge" id="gV" hidden><div class="disk" id="disk"><i class="disk__b" id="diskB"></i></div></div>
+      <p class="inst__deg" id="deg">0.0°</p>
+      <p class="inst__deg2" id="deg2"></p>
+      <p class="inst__msg" id="msg" role="status">Toca «Activar nivel» para empezar</p>
+    </div>
+  </div>
+  <div class="ctrl">
+    <div class="seg" role="group" aria-label="Modo del nivel">
+      <button type="button" data-mode-btn="h" aria-pressed="true">Horizontal</button>
+      <button type="button" data-mode-btn="v" aria-pressed="false">Vertical</button>
+    </div>
+    <button class="btn btn--wa" id="start" type="button">Activar nivel</button>
+  </div>
+  <p class="tip" id="tip"></p>
+  <div class="ctrl">
+    <button class="btn btn--tel" id="cal" type="button">Calibrar</button>
+    <button class="btn btn--tel" id="reset" type="button">Restablecer</button>
+  </div>
+</div></section>
+
+<section class="sec cemento-claro"><div class="wrap">
+  <div class="sec-head"><p class="label">Cómo se usa</p><h2 class="display">Horizontal y vertical</h2></div>
+  <div class="grid grid--3 stagger">
+    <div class="card reveal"><span class="num">01</span><h3>Horizontal</h3><p>Para repisas, mesas, vigas y pisos. Pon el cel de canto, parado sobre su orilla, con la pantalla hacia ti. La burbuja se va al lado más alto.</p></div>
+    <div class="card reveal"><span class="num">02</span><h3>Vertical</h3><p>Para paredes, postes y marcos de puerta. Recarga la espalda del cel contra la superficie. Te dice cuánto se inclina a los lados y hacia adelante o atrás.</p></div>
+    <div class="card reveal"><span class="num">03</span><h3>Calibrar</h3><p>Pon el cel sobre una superficie que ya sepas que está a nivel y toca «Calibrar». Para comprobar, voltéalo 180°: debe marcar casi cero también.</p></div>
+  </div>
+</div></section>
+
+<section class="sec cemento"><div class="wrap">
+  <div class="sec-head"><p class="label">Preguntas frecuentes</p><h2 class="display">Dudas del nivel</h2></div>
+  ${faqHtml(nivelFaq)}
+</div></section>
+
+${cta('Hola Eduardo, usé el nivel de tu página y quiero una cotización.')}`,
+}));
+
 /* ---------- 404, robots, sitemap ---------- */
 write('/404.html', layout({
   path: '/404.html', noindex: true, title: 'Página no encontrada | Eduardo Sandoval', desc: 'Esta página no existe.',
   body: `<section class="sub-hero ladrillo"><div class="wrap"><h1 class="display"><span class="h-line"><span>404</span></span></h1><div class="panel"><p class="lede">Esa página no existe, pero la obra sigue en pie. Vuelve al inicio o escríbeme.</p></div><div class="btn-row"><a class="btn btn--wa" href="/">Ir al inicio</a>${tel()}</div></div></section>`,
 }));
 
-const urls = ['/', ...services.map((s) => `/${s.slug}/`), '/blog/', ...posts.map((p) => `/blog/${p.slug}/`)];
+const urls = ['/', ...services.map((s) => `/${s.slug}/`), '/nivel/', '/blog/', ...posts.map((p) => `/blog/${p.slug}/`)];
 writeFileSync(join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${site.url}${u}</loc><lastmod>${site.today}</lastmod></url>`).join('\n')}\n</urlset>\n`);
 writeFileSync(join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${site.url}/sitemap.xml\n`);
 console.log(`✓ ${urls.length} páginas en ${OUT}/`);

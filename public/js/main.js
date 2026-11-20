@@ -14,7 +14,7 @@
     btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
     nav.addEventListener('click', (e) => { if (e.target.closest('a')) set(false); });
     d.addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
-    matchMedia('(min-width: 900px)').addEventListener('change', (m) => { if (m.matches) set(false); });
+    matchMedia('(min-width: 1240px)').addEventListener('change', (m) => { if (m.matches) set(false); });
   }
 
   // Aparecer al entrar en pantalla (con escalonado corto)
