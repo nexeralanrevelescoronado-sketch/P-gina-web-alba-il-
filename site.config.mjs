@@ -1,8 +1,8 @@
 // ÚNICO lugar para cambiar teléfono, dominio y zonas. Después corre: node build.mjs
 export const site = {
   name: 'Eduardo Sandoval',
-  // PENDIENTE: poner el teléfono real de 10 dígitos (sin +52, sin espacios). Sirve para llamada y WhatsApp.
-  phone: '3300000000',
+  // Teléfono de Eduardo (10 dígitos). Sirve para llamada y WhatsApp.
+  phone: '3312924621',
   // PENDIENTE: cambiar por el dominio real cuando lo tengan (o la URL de Render).
   url: 'https://eduardo-sandoval.onrender.com',
   city: 'Guadalajara',
