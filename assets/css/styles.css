@@ -338,3 +338,46 @@ button.btn { font-family: var(--f-body); }
 .seg button:active { transform: scale(.97); }
 .seg button[aria-pressed='true'] { background: var(--graf); color: var(--cem-50); }
 @media (prefers-reduced-motion: reduce) { .inst__panel { transition: box-shadow 150ms ease; } }
+
+/* ---------- Portada con video ---------- */
+.hero--video { position: relative; overflow: hidden; isolation: isolate; color: #fff; }
+.hero__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 38% 50%; z-index: -2; }
+.hero__shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(20,20,22,.72), rgba(20,20,22,.6) 45%, rgba(20,20,22,.82)); }
+@media (min-width: 900px) { .hero__shade { background: linear-gradient(90deg, rgba(20,20,22,.88), rgba(20,20,22,.6) 52%, rgba(20,20,22,.22)), linear-gradient(0deg, rgba(20,20,22,.5), transparent 40%); } }
+.hero--video .label { color: var(--mortero); }
+.hero--video .h-line:nth-child(2) > span { color: #e8764d; }
+.hero--video .lede { color: var(--cem-100); }
+.hero--video .chips li { border-color: rgba(255,255,255,.4); }
+.hero--video .nivel__txt, .hero--video .link-arrow { color: #fff; }
+
+/* ---------- Muro que se levanta con el scroll ---------- */
+.obra { background: var(--graf); color: #fff; }
+.obra__sticky { position: relative; height: min(78svh, 620px); overflow: hidden; }
+.obra__fallback, .obra__canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.obra__canvas { display: none; }
+.obra__shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(20,20,22,.88), rgba(20,20,22,.1) 55%, rgba(20,20,22,.35)); }
+.obra__txt { position: absolute; inset: auto 0 0 0; padding: 0 var(--pad) clamp(1.4rem, 5vw, 3rem); max-width: calc(var(--max) + 2 * var(--pad)); margin-inline: auto; display: grid; gap: .8rem; }
+.obra__txt h2 { font-size: clamp(2.2rem, 9vw, 5.5rem); line-height: .92; }
+.obra__txt .label { color: var(--mortero); }
+.obra__steps { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; max-width: 36rem; }
+.obra__step { color: var(--cem-100); font-size: 1.02rem; }
+.obra__step b { font-family: var(--f-display); font-weight: 400; color: #e8764d; margin-right: .5rem; }
+.obra__bar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: #e8764d; transform: scaleX(0); transform-origin: left; display: none; }
+
+/* Modo vivo: lo activa obra.js solo si el celular lo aguanta */
+.obra.is-live .obra__track { height: 300svh; }
+.obra.is-live .obra__sticky { position: sticky; top: var(--header-h); height: calc(100svh - var(--header-h)); }
+.obra.has-frame .obra__canvas { display: block; }
+.obra.has-frame .obra__fallback { display: none; }
+.obra.is-live .obra__bar { display: block; }
+.obra.is-live .obra__step { position: absolute; inset: auto 0 auto 0; opacity: 0; transform: translateY(8px); transition: opacity 280ms var(--ease-out), transform 280ms var(--ease-out); }
+.obra.is-live .obra__steps { position: relative; min-height: 3.2rem; }
+.obra.is-live .obra__step.is-on { opacity: 1; transform: none; }
+.obra.is-live .obra__cta { opacity: 0; transform: translateY(10px); transition: opacity 280ms var(--ease-out), transform 280ms var(--ease-out); pointer-events: none; }
+.obra.is-live .obra__cta.is-on { opacity: 1; transform: none; pointer-events: auto; }
+@media (max-width: 719px) { .obra.is-live .obra__track { height: 260svh; } }
+@media (max-width: 1239px) {
+  .obra__txt { padding-bottom: calc(clamp(1.4rem, 5vw, 3rem) + 84px); }
+  .obra__cta { display: none; }
+  .obra.is-live .obra__steps { min-height: 3.7rem; }
+}

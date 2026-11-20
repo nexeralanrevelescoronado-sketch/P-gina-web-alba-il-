@@ -203,12 +203,15 @@ const chapters = [
 ];
 
 write('/', layout({
-  path: '/', current: '/',
+  path: '/', current: '/', scripts: ['/js/obra.js'],
   title: 'Albañil, constructor y plomero en Guadalajara | Eduardo Sandoval',
   desc: 'Eduardo Sandoval: albañilería, construcción, remodelaciones y plomería en Guadalajara, Zapopan, Tlaquepaque y Tonalá. Pide tu cotización por WhatsApp.',
   schema: [businessSchema(), faqSchema(homeFaq)],
   body: `
-<section class="hero cemento"><div class="wrap">
+<section class="hero hero--video cemento on-dark">
+  <video class="hero__video" poster="/media/hero-poster.webp" muted loop playsinline autoplay preload="metadata" aria-hidden="true" tabindex="-1"><source src="/media/hero.mp4" type="video/mp4"></video>
+  <div class="hero__shade" aria-hidden="true"></div>
+<div class="wrap">
   <p class="label">Eduardo Sandoval · ${site.city} y zona metropolitana</p>
   <h1 class="display" aria-label="Albañil, constructor y plomero">
     <span class="h-line" style="--i:0"><span>Albañil.</span></span>
@@ -220,6 +223,27 @@ write('/', layout({
   <ul class="chips"><li>Trabajo limpio</li><li>Presupuesto claro</li><li>Respuesta por WhatsApp</li></ul>
   <div class="nivel"><span class="nivel__tubo" aria-hidden="true"><i class="nivel__burbuja"></i></span><a class="link-arrow nivel__link" href="/nivel/">Prueba el nivel en tu celular <span aria-hidden="true">→</span></a></div>
 </div></section>
+
+<section class="obra on-dark" aria-labelledby="obra-h" data-obra data-h="/media/scroll-h/" data-nh="59" data-v="/media/scroll-v/" data-nv="48">
+  <div class="obra__track">
+    <div class="obra__sticky">
+      <img class="obra__fallback" src="/media/obra-final-h.webp" srcset="/media/obra-final-v.webp 540w, /media/obra-final-h.webp 1280w" sizes="100vw" width="1280" height="720" alt="Muro de tabique levantado y aplanado a plomo" loading="lazy" decoding="async">
+      <canvas class="obra__canvas" aria-hidden="true"></canvas>
+      <div class="obra__shade" aria-hidden="true"></div>
+      <div class="obra__txt">
+        <p class="label">Así se levanta tu obra</p>
+        <h2 class="display" id="obra-h">De cero a muro terminado</h2>
+        <ol class="obra__steps">
+          <li class="obra__step is-on"><b>01</b> Se asienta la primera hilada, derecha y a nivel.</li>
+          <li class="obra__step"><b>02</b> El muro sube hilada por hilada, a plomo y bien trabado.</li>
+          <li class="obra__step"><b>03</b> Se aplana y queda listo para pintar o poner acabados.</li>
+        </ol>
+        <div class="obra__cta">${wa('Hola Eduardo, quiero cotizar un muro o una obra.', 'Cotizar mi obra')}</div>
+      </div>
+      <i class="obra__bar" aria-hidden="true"></i>
+    </div>
+  </div>
+</section>
 
 <div class="stack">
 ${chapters.map(({ cls, s }) => `
