@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: eduardo-sandoval
+    runtime: static
+    buildCommand: node build.mjs
+    staticPublishPath: public
+    headers:
+      - path: /css/*
+        name: Cache-Control
+        value: public, max-age=86400
+      - path: /js/*
+        name: Cache-Control
+        value: public, max-age=86400
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
